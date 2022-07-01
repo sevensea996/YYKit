@@ -19,7 +19,6 @@ FOUNDATION_EXPORT const unsigned char YYKitVersionString[];
 #import <YYKit/YYKitMacro.h>
 #import <YYKit/NSObject+YYAdd.h>
 #import <YYKit/NSObject+YYAddForKVO.h>
-#import <YYKit/NSObject+YYAddForARC.h>
 #import <YYKit/NSString+YYAdd.h>
 #import <YYKit/NSNumber+YYAdd.h>
 #import <YYKit/NSData+YYAdd.h>
@@ -30,7 +29,6 @@ FOUNDATION_EXPORT const unsigned char YYKitVersionString[];
 #import <YYKit/NSKeyedUnarchiver+YYAdd.h>
 #import <YYKit/NSTimer+YYAdd.h>
 #import <YYKit/NSBundle+YYAdd.h>
-#import <YYKit/NSThread+YYAdd.h>
 
 #import <YYKit/UIColor+YYAdd.h>
 #import <YYKit/UIImage+YYAdd.h>
@@ -110,7 +108,6 @@ FOUNDATION_EXPORT const unsigned char YYKitVersionString[];
 #import "YYKitMacro.h"
 #import "NSObject+YYAdd.h"
 #import "NSObject+YYAddForKVO.h"
-#import "NSObject+YYAddForARC.h"
 #import "NSString+YYAdd.h"
 #import "NSNumber+YYAdd.h"
 #import "NSData+YYAdd.h"
@@ -121,7 +118,6 @@ FOUNDATION_EXPORT const unsigned char YYKitVersionString[];
 #import "NSKeyedUnarchiver+YYAdd.h"
 #import "NSTimer+YYAdd.h"
 #import "NSBundle+YYAdd.h"
-#import "NSThread+YYAdd.h"
 
 #import "UIColor+YYAdd.h"
 #import "UIImage+YYAdd.h"

@@ -6,20 +6,12 @@ Pod::Spec.new do |s|
   s.authors      = { 'ibireme' => 'ibireme@gmail.com' }
   s.social_media_url = 'http://blog.ibireme.com'
   s.homepage     = 'https://github.com/ibireme/YYKit'
-  s.platform     = :ios, '6.0'
-  s.ios.deployment_target = '6.0'
+  s.platform     = :ios, '9.0'
+  s.ios.deployment_target = '9.0'
   s.source       = { :git => 'https://github.com/sevensea996/YYKit.git', :tag => s.version.to_s }
   
-  s.requires_arc = true
   s.source_files = 'YYKit/**/*.{h,m}'
   s.public_header_files = 'YYKit/**/*.{h}'
-
-  non_arc_files = 'YYKit/Base/Foundation/NSObject+YYAddForARC.{h,m}', 'YYKit/Base/Foundation/NSThread+YYAdd.{h,m}'
-  s.ios.exclude_files = non_arc_files
-  s.subspec 'no-arc' do |sna|
-    sna.requires_arc = false
-    sna.source_files = non_arc_files
-  end
 
   s.libraries = 'z', 'sqlite3'
   s.frameworks = 'UIKit', 'CoreFoundation', 'CoreText', 'CoreGraphics', 'CoreImage', 'QuartzCore', 'ImageIO', 'AssetsLibrary', 'Accelerate', 'MobileCoreServices', 'SystemConfiguration'
@@ -29,25 +21,31 @@ Pod::Spec.new do |s|
     ss.source_files = 'YYKit/Base/**/*.{h,m}'
   end
 
-  s.subspec 'Cache' do |ss|
-    ss.source_files = 'YYKit/Cache/**/*.{h,m}'
-  end
-
-  s.subspec 'Image' do |ss|
-    ss.source_files = 'YYKit/Image/**/*.{h,m}'
+  s.subspec 'Utility' do |ss|
+    ss.source_files = 'YYKit/Utility/**/*.{h,m}'
+    ss.dependency 'YYKit/Base'
   end
 
   s.subspec 'Model' do |ss|
     ss.source_files = 'YYKit/Model/**/*.{h,m}'
   end
 
-  s.subspec 'Text' do |ss|
-    ss.source_files = 'YYKit/Text/**/*.{h,m}'
+  s.subspec 'Cache' do |ss|
+    ss.source_files = 'YYKit/Cache/**/*.{h,m}'
+    ss.dependency 'YYKit/Base'
   end
 
-  s.subspec 'Utility' do |ss|
-    ss.source_files = 'YYKit/Utility/**/*.{h,m}'
+  s.subspec 'Image' do |ss|
+    ss.source_files = 'YYKit/Image/**/*.{h,m}'
+    ss.dependency 'YYKit/Cache'
+    ss.dependency 'YYKit/Utility'
   end
+
+  s.subspec 'Text' do |ss|
+    ss.source_files = 'YYKit/Text/**/*.{h,m}'
+    ss.dependency 'YYKit/Image'
+  end
+
 
 
 end
