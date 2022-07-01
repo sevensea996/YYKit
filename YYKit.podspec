@@ -9,9 +9,6 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '9.0'
   s.ios.deployment_target = '9.0'
   s.source       = { :git => 'https://github.com/sevensea996/YYKit.git', :tag => s.version.to_s }
-  
-  s.source_files = 'YYKit/YYKit.h'
-  s.public_header_files = 'YYKit/**/*.{h}'
 
   s.libraries = 'z', 'sqlite3'
   s.frameworks = 'UIKit', 'CoreFoundation', 'CoreText', 'CoreGraphics', 'CoreImage', 'QuartzCore', 'ImageIO', 'AssetsLibrary', 'Accelerate', 'MobileCoreServices', 'SystemConfiguration'
@@ -47,5 +44,7 @@ Pod::Spec.new do |s|
   end
 
 
+  s.source_files = 'YYKit/**/*.{h,m}'
+  s.public_header_files = 'YYKit/**/*.{h}'
 
 end
