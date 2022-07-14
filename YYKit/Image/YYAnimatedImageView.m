@@ -400,15 +400,21 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
         delay = [image animatedImageDurationAtIndex:nextIndex];
         if (_time > delay) _time = delay; // do not jump over frame
     }
+    BOOL shouldNotifyLoopCompletion = NO;
+    NSUInteger remainingLoopNr = 0;
     LOCK(
          bufferedImage = buffer[@(nextIndex)];
          if (bufferedImage) {
-             if ((int)_incrBufferCount < _totalFrameCount) {
+             if ((int)_incrBufferCount < (int)_totalFrameCount) {
                  [buffer removeObjectForKey:@(nextIndex)];
              }
              [self willChangeValueForKey:@"currentAnimatedImageIndex"];
              _curIndex = nextIndex;
              [self didChangeValueForKey:@"currentAnimatedImageIndex"];
+             if (_curIndex + 1 == _totalFrameCount && self.loopCompletionBlock) {
+                 shouldNotifyLoopCompletion = YES;
+                 remainingLoopNr = _totalLoop - _curLoop;
+             }
              _curFrame = bufferedImage == (id)[NSNull null] ? nil : bufferedImage;
              if (_curImageHasContentsRect) {
                  _curContentsRect = [image animatedImageContentsRectAtIndex:_curIndex];
@@ -423,6 +429,10 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
              _bufferMiss = YES;
          }
     )//LOCK
+    
+    if (shouldNotifyLoopCompletion) {
+        self.loopCompletionBlock(remainingLoopNr);
+    }
     
     if (!_bufferMiss) {
         [self.layer setNeedsDisplay]; // let system call `displayLayer:` before runloop sleep

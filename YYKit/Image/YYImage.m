@@ -21,6 +21,10 @@
 }
 
 + (YYImage *)imageNamed:(NSString *)name {
+    return [self imageNamed:name inBundle:[NSBundle mainBundle]];
+}
+
++ (YYImage *)imageNamed:(NSString *)name inBundle:(NSBundle *)bundle {
     if (name.length == 0) return nil;
     if ([name hasSuffix:@"/"]) return nil;
     
@@ -36,7 +40,7 @@
         scale = ((NSNumber *)scales[s]).floatValue;
         NSString *scaledName = [res stringByAppendingNameScale:scale];
         for (NSString *e in exts) {
-            path = [[NSBundle mainBundle] pathForResource:scaledName ofType:e];
+            path = [bundle pathForResource:scaledName ofType:e];
             if (path) break;
         }
         if (path) break;

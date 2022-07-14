@@ -885,7 +885,12 @@ CGImageRef YYCGImageCreateDecodedCopy(CGImageRef imageRef, BOOL decodeForDisplay
         bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
         CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, YYCGColorSpaceGetDeviceRGB(), bitmapInfo);
         if (!context) return NULL;
-        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+        
+        @try {
+            CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+        } @catch (NSException *exception) {
+            
+        }
         CGImageRef newImage = CGBitmapContextCreateImage(context);
         CFRelease(context);
         return newImage;
@@ -2349,6 +2354,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
         } break;
         case YYImageTypeWebP: {
             _quality = 0.8;
+            _lossless = YES;
         } break;
         default:
             break;
@@ -2554,6 +2560,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
             CFRelease(extendedImage);
             return nil;
         }
+        CFRelease(extendedImage);
         pngDatas[0] = (__bridge id)(frameData);
         CFRelease(frameData);
     }
