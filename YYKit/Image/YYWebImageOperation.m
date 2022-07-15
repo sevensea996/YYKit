@@ -653,6 +653,7 @@ didReceiveResponse:(NSURLResponse *)response
                         } break;
                     }
                     if ([self isCancelled]) return;
+                    if (!image) return;
 
                     if (self.transform && image) {
                         UIImage *newImage = self.transform(image, self.request.URL);

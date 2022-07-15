@@ -865,56 +865,56 @@ fail:
 }
 
 CGImageRef YYCGImageCreateDecodedCopy(CGImageRef imageRef, BOOL decodeForDisplay) {
-    if (!imageRef) return NULL;
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    if (width == 0 || height == 0) return NULL;
-    
-    if (decodeForDisplay) { //decode with redraw (may lose some precision)
-        CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
-        BOOL hasAlpha = NO;
-        if (alphaInfo == kCGImageAlphaPremultipliedLast ||
-            alphaInfo == kCGImageAlphaPremultipliedFirst ||
-            alphaInfo == kCGImageAlphaLast ||
-            alphaInfo == kCGImageAlphaFirst) {
-            hasAlpha = YES;
-        }
-        // BGRA8888 (premultiplied) or BGRX8888
-        // same as UIGraphicsBeginImageContext() and -[UIView drawRect:]
-        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
-        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
-        CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, YYCGColorSpaceGetDeviceRGB(), bitmapInfo);
-        if (!context) return NULL;
+    @try {
+        if (!imageRef) return NULL;
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        if (width == 0 || height == 0) return NULL;
         
-        @try {
-            CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
-        } @catch (NSException *exception) {
+        if (decodeForDisplay) { //decode with redraw (may lose some precision)
+            CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
+            BOOL hasAlpha = NO;
+            if (alphaInfo == kCGImageAlphaPremultipliedLast ||
+                alphaInfo == kCGImageAlphaPremultipliedFirst ||
+                alphaInfo == kCGImageAlphaLast ||
+                alphaInfo == kCGImageAlphaFirst) {
+                hasAlpha = YES;
+            }
+            // BGRA8888 (premultiplied) or BGRX8888
+            // same as UIGraphicsBeginImageContext() and -[UIView drawRect:]
+            CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;
+            bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+            CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, YYCGColorSpaceGetDeviceRGB(), bitmapInfo);
+            if (!context) return NULL;
             
+            CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef); // decode
+            CGImageRef newImage = CGBitmapContextCreateImage(context);
+            CFRelease(context);
+            return newImage;
+            
+        } else {
+            CGColorSpaceRef space = CGImageGetColorSpace(imageRef);
+            size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+            size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef);
+            size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+            CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+            if (bytesPerRow == 0 || width == 0 || height == 0) return NULL;
+            
+            CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
+            if (!dataProvider) return NULL;
+            CFDataRef data = CGDataProviderCopyData(dataProvider); // decode
+            if (!data) return NULL;
+            
+            CGDataProviderRef newProvider = CGDataProviderCreateWithCFData(data);
+            CFRelease(data);
+            if (!newProvider) return NULL;
+            
+            CGImageRef newImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, space, bitmapInfo, newProvider, NULL, false, kCGRenderingIntentDefault);
+            CFRelease(newProvider);
+            return newImage;
         }
-        CGImageRef newImage = CGBitmapContextCreateImage(context);
-        CFRelease(context);
-        return newImage;
-        
-    } else {
-        CGColorSpaceRef space = CGImageGetColorSpace(imageRef);
-        size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
-        size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef);
-        size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
-        CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-        if (bytesPerRow == 0 || width == 0 || height == 0) return NULL;
-        
-        CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
-        if (!dataProvider) return NULL;
-        CFDataRef data = CGDataProviderCopyData(dataProvider); // decode
-        if (!data) return NULL;
-        
-        CGDataProviderRef newProvider = CGDataProviderCreateWithCFData(data);
-        CFRelease(data);
-        if (!newProvider) return NULL;
-        
-        CGImageRef newImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, space, bitmapInfo, newProvider, NULL, false, kCGRenderingIntentDefault);
-        CFRelease(newProvider);
-        return newImage;
+    } @catch (NSException *exception) {
+        NSLog(@"Image decoder is Error:%@", exception);
     }
 }
 
