@@ -1640,7 +1640,12 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
         CGImageRef imageRef = [self _newUnblendedImageAtIndex:index extendToCanvas:extendToCanvas decoded:&decoded];
         if (!imageRef) return nil;
         if (decodeForDisplay && !decoded) {
-            CGImageRef imageRefDecoded = YYCGImageCreateDecodedCopy(imageRef, YES);
+            CGImageRef imageRefDecoded = NULL;
+            @try {
+                imageRefDecoded = YYCGImageCreateDecodedCopy(imageRef, YES);
+            } @catch (NSException *exception) {
+                
+            }
             if (imageRefDecoded) {
                 CFRelease(imageRef);
                 imageRef = imageRefDecoded;
@@ -2056,7 +2061,12 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
             size_t width = CGImageGetWidth(imageRef);
             size_t height = CGImageGetHeight(imageRef);
             if (width == _width && height == _height) {
-                CGImageRef imageRefExtended = YYCGImageCreateDecodedCopy(imageRef, YES);
+                CGImageRef imageRefExtended = NULL;
+                @try {
+                    imageRefExtended = YYCGImageCreateDecodedCopy(imageRef, YES);
+                } @catch (NSException *exception) {
+                    
+                }
                 if (imageRefExtended) {
                     CFRelease(imageRef);
                     imageRef = imageRefExtended;
